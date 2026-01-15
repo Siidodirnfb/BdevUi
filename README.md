@@ -36,12 +36,33 @@ A high-quality, modern UI library for Roblox with a sleek black, white, and gray
 
 ## Installation
 
+### For Roblox Studio/Game Development
 1. Download `BdevUi.lua` and place it in your game
 2. Require the module in your script:
 
 ```lua
 local BdevUi = require(path.to.BdevUi)
 ```
+
+### For Executors (Synapse X, Script-Ware, etc.)
+
+#### Method 1: Loadstring (Recommended)
+```lua
+-- Load the library
+local BdevUi = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-repo/BdevUi/main/BdevUi_Executor.lua"))()
+
+-- Create your UI
+local Window = BdevUi:CreateWindow("My Executor UI")
+local MainTab = Window:AddTab("Main")
+
+MainTab:AddButton("Execute Script", function()
+    -- Your code here
+    BdevUi:Notify("Success", "Script executed!", 2)
+end)
+```
+
+#### Method 2: Direct Copy-Paste
+Copy the entire contents of `BdevUi_Pastebin.lua` and execute it directly in your executor. It includes a usage example at the end.
 
 ## Quick Start
 
@@ -348,11 +369,88 @@ local text = input:GetValue()  -- Get current text
 5. **Cleanup**: Call `BdevUi:Destroy()` when done to clean up resources
 6. **Performance**: Avoid creating too many UI elements at once
 
+## Executor Usage
+
+BdevUi is designed to work perfectly with Roblox executors. Here's how to use it:
+
+### Quick Start for Executors
+
+1. **Load the Library:**
+```lua
+local BdevUi = loadstring(game:HttpGet("https://raw.githubusercontent.com/your-repo/BdevUi/main/BdevUi_Executor.lua"))()
+```
+
+2. **Create Your UI:**
+```lua
+local Window = BdevUi:CreateWindow("My Hack Menu", UDim2.new(0, 400, 0, 300))
+local MainTab = Window:AddTab("Main")
+local ExploitsTab = Window:AddTab("Exploits")
+
+-- Add features
+MainTab:AddButton("ESP", function()
+    -- Enable ESP
+    BdevUi:Notify("ESP", "Enabled!", 2)
+end)
+
+ExploitsTab:AddToggle("Speed Hack", false, function(enabled)
+    if enabled then
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
+    else
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    end
+end)
+
+ExploitsTab:AddSlider("Jump Power", 50, 200, 50, function(value)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+end)
+```
+
+### Executor Features
+
+- **Loadstring Compatible**: Works with all major executors
+- **Service Fallbacks**: Handles missing services gracefully
+- **Error Resistant**: Won't crash if services aren't available
+- **Memory Safe**: Proper cleanup to avoid memory leaks
+- **Notification System**: Built-in notifications for user feedback
+
+### Common Executor Patterns
+
+```lua
+-- Speed Hack with Toggle
+local speedEnabled = false
+Tab:AddToggle("Speed Hack", false, function(enabled)
+    speedEnabled = enabled
+    local hum = game.Players.LocalPlayer.Character.Humanoid
+    hum.WalkSpeed = enabled and 100 or 16
+    BdevUi:Notify("Speed", enabled and "Enabled" or "Disabled", 2)
+end)
+
+-- Teleport Dropdown
+Tab:AddDropdown("Teleport", {"Spawn", "Base", "Shop"}, "Spawn", function(location)
+    local root = game.Players.LocalPlayer.Character.HumanoidRootPart
+    if location == "Spawn" then
+        root.CFrame = CFrame.new(0, 10, 0)
+    elseif location == "Base" then
+        -- Teleport to base
+    end
+    BdevUi:Notify("Teleport", "Teleported to " .. location, 2)
+end)
+
+-- Custom Command Input
+Tab:AddInput("Execute", "Enter Lua code...", function(code, enter)
+    if enter and code ~= "" then
+        local success, err = pcall(loadstring(code))
+        BdevUi:Notify(success and "Success" or "Error", success and "Code executed" or err, 3)
+    end
+end)
+```
+
 ## Compatibility
 
 - **Roblox Studio**: Fully compatible
 - **Live Games**: Works in all Roblox environments
 - **All Platforms**: Supports PC, Mobile, Xbox, etc.
+- **Executors**: Compatible with Synapse X, Script-Ware, KRNL, and other popular executors
 
 ## License
 
